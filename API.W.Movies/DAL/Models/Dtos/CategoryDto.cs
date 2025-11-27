@@ -1,9 +1,13 @@
-﻿namespace API.W.Movies.DAL.Models.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API.W.Movies.DAL.Models.Dtos
 {
     public class CategoryDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        [Required(ErrorMessage = "El nombre de la categoria es obligatorio" )]
+        [MaxLength(100, ErrorMessage = "El numero maximo de caracteres es 100")]
+        public string Name { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }
