@@ -46,7 +46,20 @@ namespace API.W.Movies.Services
 
         public async Task<bool> DeleteCategoryAsync(int id)
         {
-            return await _categoryRepository.DeleteCategoryAsync(id);
+            //Verificar si la categoría existe
+            var categoryExists = await _categoryRepository.GetCategoryAsync(id);
+
+            if (categoryExists == null)
+                throw new InvalidOperationException($"No se encontró la categoría con ID '{id}'");
+
+            //Eliminar la categoría
+            var categoryDeleted = await _categoryRepository.DeleteCategoryAsync(id);
+
+            if (!categoryDeleted)
+            {
+                throw new Exception("Ocurrió un error al eliminar la categoría.");
+            }
+            return categoryDeleted;
         }
 
         public async Task<ICollection<CategoryDto>> GetCategoriesAsync()

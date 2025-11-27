@@ -110,7 +110,6 @@ namespace API.W.Movies.Controllers
         }
 
         [HttpDelete("{id:int}", Name = "DeleteCategoryAsync")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -120,7 +119,7 @@ namespace API.W.Movies.Controllers
             try
             {
                 var deletedCategory = await _categoryService.DeleteCategoryAsync(id);
-                return Ok(deletedCategory);
+                return Ok(deletedCategory); //Retorno un OK para mostrar el "True" de la eliminacion
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("No se encontró"))
             {
@@ -130,6 +129,8 @@ namespace API.W.Movies.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+
+
         }
     }
 }
