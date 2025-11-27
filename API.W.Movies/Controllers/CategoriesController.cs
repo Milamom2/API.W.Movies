@@ -1,9 +1,6 @@
 ﻿using API.W.Movies.DAL.Models.Dtos;
 using API.W.Movies.Services.IServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
-using AutoMapper;
 
 
 namespace API.W.Movies.Controllers
@@ -13,31 +10,72 @@ namespace API.W.Movies.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly IMapper _mapper;
-        public CategoriesController(ICategoryService categoryService, IMapper mapper)
+
+        public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-            _mapper = mapper;
         }
-       
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ICollection<CategoryDto>>> GetCategoriesAsync()
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoriesAsync()
         {
             var categories = await _categoryService.GetCategoriesAsync();
             return Ok(categories);
         }
+
         [HttpGet("{id:int}", Name = "GetCategoryAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound )]
-        public async Task<ActionResult<ICollection<CategoryDto>>> GetCategoryAsync(int id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CategoryDto>> GetCategoryAsync(int id)
         {
-            var categoryDto = await _categoryService.GetCategoryAsync(id);
-            return Ok(categoryDto);
+            try
+            {
+                var categoryDto = await _categoryService.GetCategoryAsync(id);
+                return Ok(categoryDto);
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("No se encontró"))
+            {
+                return NotFound(new { ex.Message });
+            }
+        }
+
+        // POST api/categories
+        [HttpPost(Name = "CreateCategoryAsync")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<CategoryDto>> CreateCategoryAsync([FromBody] CategoryCreateDto categoryCreateDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var createdCategory = await _categoryService.CreateCategoryAsync(categoryCreateDto);
+
+                //vamos a retornar un 201 Created con la ruta para obtener la categoria creada
+                return CreatedAtRoute(
+                    "GetCategoryAsync", //1mer parametro: nombre de la ruta
+                    new { id = createdCategory.Id }, //2do parametro: los valores de los parametros de la ruta
+                    createdCategory //3er parametro: el objeto creado
+                );
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("Ya existe"))
+            {
+                return Conflict(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        
         }
     }
 }

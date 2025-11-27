@@ -7,7 +7,6 @@ namespace API.W.Movies.DAL.Models.Dtos
         [Required(ErrorMessage = "El nombre de la categoria obligatoria")]
         [MaxLength(100, ErrorMessage = "El número máximo es de 100 caracteres")]
         public string Name { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime? ModifiedDate { get; set; }
+
     }
 }
