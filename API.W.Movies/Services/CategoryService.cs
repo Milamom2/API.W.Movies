@@ -14,9 +14,10 @@ namespace API.W.Movies.Services
         public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
+            _mapper = mapper;
         }
 
-        public Task<bool> CategoryExistsByIdAsync(int id)
+        public async Task<bool> CategoryExistsByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
@@ -26,29 +27,34 @@ namespace API.W.Movies.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> CreateCategoryAsync(Category category)
+        public async Task<bool> CreateCategoryAsync(Category category)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteCategoryAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<CategoryDto> GetCategoryAsync(int id)
+        public async Task<bool> DeleteCategoryAsync(int id)
         {
             throw new NotImplementedException();
         }
 
         public async Task<ICollection<CategoryDto>> GetCategoriesAsync()
         {
-            var categories = _categoryRepository.GetCategoriesAsync(); //Llamando el metodo desde la capa de repositorio
+            var categories = await _categoryRepository.GetCategoriesAsync(); //Llamando el metodo desde la capa de repositorio
+            
             return _mapper.Map<ICollection<CategoryDto>>(categories); //Mapeando la entidad a DTO
             
         }
 
-        public Task<bool> UpdateCategoryAsync(Category category)
+        public async Task<CategoryDto> GetCategoryAsync(int id)
+        {
+            //Obtengo la categoria del repositorio
+            var category = await _categoryRepository.GetCategoryAsync(id); 
+
+            //Mapeando la entidad a DTO
+            return _mapper.Map<CategoryDto>(category);
+        }
+
+        public async Task<bool> UpdateCategoryAsync(Category category)
         {
             throw new NotImplementedException();
         }

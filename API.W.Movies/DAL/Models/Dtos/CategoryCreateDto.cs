@@ -8,6 +8,6 @@ namespace API.W.Movies.DAL.Models.Dtos
         [MaxLength(100, ErrorMessage = "El número máximo es de 100 caracteres")]
         public string Name { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
     }
 }
