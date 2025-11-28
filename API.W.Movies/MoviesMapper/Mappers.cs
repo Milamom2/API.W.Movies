@@ -10,6 +10,9 @@ namespace API.W.Movies.MoviesMapper
         {
             CreateMap<Category, CategoryDto>() .ReverseMap();
             CreateMap<Category, CategoryCreateUpdateDto>() .ReverseMap();
+            CreateMap<Movie, MovieDto>().ReverseMap();
+            CreateMap<Movie, MovieCreateUpdateDto>().ReverseMap();
+
         }
     }
 
